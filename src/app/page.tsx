@@ -1,9 +1,8 @@
-import LandingBanner from "@/components/ui/landing-banner";
-
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
-      <LandingBanner />
+    <div>
+      <h1>Welcome to Bunnyfied Labs</h1>
+      <p>This is the home page.</p>
     </div>
   );
 }
