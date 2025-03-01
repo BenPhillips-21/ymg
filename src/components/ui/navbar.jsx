@@ -9,7 +9,7 @@ import {
 
 export const Navbar = () => {
   return (
-    <Box as="nav" role="navigation" bg="blue">
+    <Box as="nav" role="navigation" bg="blue" position="sticky" top="0" zIndex="sticky">
       <Container>
         <PositionHolder minH="20">
           <MenuRoot>
@@ -20,13 +20,7 @@ export const Navbar = () => {
               About Us
             </Link>
             <Link href="/get-involved" className="mx-[10px]">
-              Get Involved
-            </Link>
-            <Link href="/contact-us" className="mx-[10px]">
-              Contact Us
-            </Link>
-            <Link href="/news" className="mx-[10px]">
-              News
+              Events
             </Link>
           </MenuRoot>
         </PositionHolder>
