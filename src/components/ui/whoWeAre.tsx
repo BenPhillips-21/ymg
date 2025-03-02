@@ -1,6 +1,11 @@
 import React from 'react';
 
-const TwoHalves = ({ leftContent, rightContent }) => {
+interface TwoHalvesProps {
+  leftContent: React.ReactNode;
+  rightContent: React.ReactNode;
+}
+
+const TwoHalves = ({ leftContent, rightContent }: TwoHalvesProps) => {
   return (
     <div className="flex w-[80vw] h-[400px]">
       <div className="w-1/2 flex items-center justify-center">
