@@ -5,7 +5,7 @@ import TwoHalves from "@/components/ui/whoWeAre";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center max-w-full px-4 py-8 mx-auto space-y-4">
+    <div className="flex flex-col items-center justify-center max-w-full px-4 mx-auto space-y-4">
       <LandingBanner />
       <OurMission />
       <TwoHalves leftContent={leftContent} rightContent={rightContent} />
@@ -15,7 +15,7 @@ export default function Home() {
 
 const leftContent = (
   <div className="p-4">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/x63K3S9Tx2M?si=eP7aO-oIV9dL3twx" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/x63K3S9Tx2M?si=eP7aO-oIV9dL3twx" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
   </div>
 );
 

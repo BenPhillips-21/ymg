@@ -25,7 +25,7 @@ export default function LandingBanner() {
         <h1
           className={`${ebGaramond.className} text-[#FAD02C] text-3xl font-bold`}
         >
-          YMG is a movement of 18-35 year old Catholic men seeking the fullness of life that only Jesus can give (John 10:10).
+          YMG is a movement of 18-35 year old Catholic men seeking the fullness of life that only Jesus can give.
         </h1>
       </div>
     </div>

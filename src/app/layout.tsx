@@ -5,10 +5,10 @@ import Head from "next/head";
 import { Flex } from "@chakra-ui/react";
 import { Navbar } from "@/components/ui/navbar";
 import { Main } from "@/components/ui/main";
+import { Footer } from '@/components/ui/footer';
 
 export const metadata: Metadata = {
-  title: "Bunnyfied Labs",
-  description: "Bunnyfied Labs Website",
+  title: "YMG Movement",
 };
 
 export default function RootLayout({
@@ -28,6 +28,7 @@ export default function RootLayout({
             <Main>
               {children}
             </Main>
+            <Footer />
           </Flex>
         </Provider>
       </body>

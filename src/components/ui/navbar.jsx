@@ -6,8 +6,15 @@ import { PositionHolder } from "./position-holder";
 import { MenuRoot } from "./menu";
 import { ebGaramond } from "./fonts";
 import { BsFacebook, BsYoutube } from "react-icons/bs";
+import { usePathname } from "next/navigation";
 
 export const Navbar = () => {
+  const pathname = usePathname();
+
+  const isActive = (path) => {
+    return pathname === path;
+  };
+
   return (
     <Box
       as="nav"
@@ -22,21 +29,30 @@ export const Navbar = () => {
           <MenuRoot>
             <div className="flex items-center w-[50%]">
               <div className="mr-auto">
-                <Link href="/" className={`${ebGaramond.className} mx-[10px]`}>
+                <Link
+                  href="/"
+                  className={`${ebGaramond.className} mx-[10px] ${
+                    isActive("/") ? "underline" : ""
+                  }`}
+                >
                   Home
                 </Link>
                 <Link
                   href="/about-us"
-                  className={`${ebGaramond.className} mx-[10px]`}
+                  className={`${ebGaramond.className} mx-[10px] ${
+                    isActive("/about-us") ? "underline" : ""
+                  }`}
                 >
                   About Us
                 </Link>
-                <Link
+                {/* <Link
                   href="/get-involved"
-                  className={`${ebGaramond.className} mx-[10px]`}
+                  className={`${ebGaramond.className} mx-[10px] ${
+                    isActive("/get-involved") ? "underline" : ""
+                  }`}
                 >
                   Events
-                </Link>
+                </Link> */}
               </div>
               <div className="flex flex-row">
                 <a
