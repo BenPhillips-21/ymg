@@ -5,7 +5,7 @@ import Link from "next/link";
 import { PositionHolder } from "./position-holder";
 import { MenuRoot } from "./menu";
 import { ebGaramond } from "./fonts";
-import { BsFacebook, BsYoutube } from "react-icons/bs";
+import { BsFacebook, BsInstagram, BsYoutube } from "react-icons/bs";
 import { usePathname } from "next/navigation";
 
 export const Navbar = () => {
@@ -70,6 +70,14 @@ export const Navbar = () => {
                   className="mx-[10px]"
                 >
                   <BsYoutube size={24} />
+                </a>
+                <a
+                  href="https://www.instagram.com/ymgmovement/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mx-[10px]"
+                >
+                  <BsInstagram size={24} />
                 </a>
               </div>
             </div>
