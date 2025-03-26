@@ -2,6 +2,7 @@ import { ebGaramond } from "@/components/ui/fonts";
 import LandingBanner from "@/components/ui/landing-banner";
 import OurMission from "@/components/ui/ourMission";
 import TwoHalves from "@/components/ui/whoWeAre";
+import ImageCarousel from "@/components/ui/image-carousel";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <LandingBanner />
       <OurMission />
       <TwoHalves leftContent={leftContent} rightContent={rightContent} />
+      <ImageCarousel />
     </div>
   );
 }
