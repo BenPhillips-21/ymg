@@ -1,35 +1,98 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React from "react";
+import { CldImage } from "next-cloudinary";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import "./image-carousel.css";
 
 export default function ImageCarousel() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }, [Autoplay()]);
-
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
+  const [emblaRef] = useEmblaCarousel({ loop: false }, [Autoplay({ delay: 6000 })]);
 
   return (
     <div className="embla">
       <div className="embla__viewport" ref={emblaRef}>
         <div className="embla__container">
-          <div className="embla__slide">Slide 1</div>
-          <div className="embla__slide">Slide 2</div>
-          <div className="embla__slide">Slide 3</div>
+          <div className="embla__slide">
+          </div>
+          <div className="embla__slide">
+          </div>
+          <div className="embla__slide">
+          </div>
+          <div className="embla__slide">
+            <CldImage
+              alt="Jesus Christ"
+              src="bknxiwhzdngqz2e6n6d6"
+              width="500"
+              height="500"
+              crop={{
+                type: "auto",
+                source: true,
+              }}
+            />
+          </div>
+          <div className="embla__slide">
+            <CldImage
+              alt="Jesus Christ"
+              src="bknxiwhzdngqz2e6n6d6"
+              width="500"
+              height="500"
+              crop={{
+                type: "auto",
+                source: true,
+              }}
+            />
+          </div>
+          <div className="embla__slide">
+            <CldImage
+              alt="Jesus Christ"
+              src="bonnlbssrzspihuxvu6o"
+              width="960"
+              height="600"
+              crop={{
+                type: "auto",
+                source: true,
+              }}
+            />
+          </div>
+          <div className="embla__slide">
+            <CldImage
+              alt="Jesus Christ"
+              src="ezwgfw3o2smxfb6kq9td"
+              width="960"
+              height="600"
+              crop={{
+                type: "auto",
+                source: true,
+              }}
+            />
+          </div> 
+          <div className="embla__slide">
+            <CldImage
+              alt="Jesus Christ"
+              src="yss9ad5ltotmbqjzgvle"
+              width="960"
+              height="600"
+              crop={{
+                type: "auto",
+                source: true,
+              }}
+            />
+          </div>
+          <div className="embla__slide">
+            <CldImage
+              alt="Jesus Christ"
+              src="xco1nhdomanq7sgwn2ca"
+              width="960"
+              height="600"
+              crop={{
+                type: "auto",
+                source: true,
+              }}
+            />
+          </div>
         </div>
       </div>
-      <button className="embla__prev" onClick={scrollPrev}>
-        Prev
-      </button>
-      <button className="embla__next" onClick={scrollNext}>
-        Next
-      </button>
     </div>
   );
 }

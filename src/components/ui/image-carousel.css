@@ -4,9 +4,13 @@
   
   .embla__container {
     display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .embla__slide {
     flex: 0 0 100%;
     min-width: 0;
+    display: flex;
+    justify-content: center;
   }
