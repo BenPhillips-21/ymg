@@ -11,7 +11,7 @@ const TwoHalves = ({ leftContent, rightContent }: TwoHalvesProps) => {
       <div className="w-1/2 flex items-center justify-center">
         {leftContent}
       </div>
-      <div className="w-1/2 flex items-center justify-center">
+      <div className="w-1/2 flex items-center justify-center ml-5">
         {rightContent}
       </div>
     </div>

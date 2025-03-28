@@ -4,7 +4,7 @@ import { ebGaramond } from "./fonts";
 export default function LandingBanner() {
   return (
     <div className="relative w-full" style={{ width: "100vw" }}>
-      <div className="relative w-[100%] h-[800px] mx-auto overflow-hidden">
+      <div className="relative w-[100%] h-[670px] mx-auto overflow-hidden">
         <Image
           src="/images/wandererAboveTheFog.webp"
           layout="fill"
@@ -14,9 +14,9 @@ export default function LandingBanner() {
           priority
         />
       </div>
-      <div className="absolute top-[10%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+      <div className="absolute top-[12%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
         <h1
-          className={`${ebGaramond.className} text-[#333652] text-7xl font-bold`}
+          className={`${ebGaramond.className} text-[#333652] w-[100%] text-7xl font-bold`}
         >
           YOUNG MEN OF GOD
         </h1>
