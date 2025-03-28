@@ -7,7 +7,7 @@ import Autoplay from "embla-carousel-autoplay";
 import "./image-carousel.css";
 
 export default function ImageCarousel() {
-  const [emblaRef] = useEmblaCarousel({ loop: false }, [Autoplay({ delay: 6000 })]);
+  const [emblaRef] = useEmblaCarousel({ loop: false }, [Autoplay({ delay: 4500 })]);
 
   return (
     <div className="embla">
