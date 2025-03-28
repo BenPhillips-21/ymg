@@ -27,11 +27,11 @@ export const Navbar = () => {
       <Container>
         <PositionHolder minH="20">
           <MenuRoot>
-            <div className="flex items-center w-[50%]">
+            <div className="flex items-center">
               <div className="mr-auto">
                 <Link
                   href="/"
-                  className={`${ebGaramond.className} mx-[10px] ${
+                  className={`${ebGaramond.className} mx-2 ${
                     isActive("/") ? "underline" : ""
                   }`}
                 >
@@ -39,20 +39,12 @@ export const Navbar = () => {
                 </Link>
                 <Link
                   href="/about-us"
-                  className={`${ebGaramond.className} mx-[10px] ${
+                  className={`${ebGaramond.className} mx-2 ${
                     isActive("/about-us") ? "underline" : ""
                   }`}
                 >
                   About Us
                 </Link>
-                {/* <Link
-                  href="/get-involved"
-                  className={`${ebGaramond.className} mx-[10px] ${
-                    isActive("/get-involved") ? "underline" : ""
-                  }`}
-                >
-                  Events
-                </Link> */}
               </div>
               <div className="flex flex-row">
                 <a
