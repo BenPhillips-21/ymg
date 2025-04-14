@@ -4,9 +4,10 @@ import { Box, Container } from "@chakra-ui/react";
 import Link from "next/link";
 import { PositionHolder } from "./position-holder";
 import { MenuRoot } from "./menu";
-import { ebGaramond } from "./fonts";
+import { montserrat } from "./fonts";
 import { BsFacebook, BsInstagram, BsYoutube } from "react-icons/bs";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export const Navbar = () => {
   const pathname = usePathname();
@@ -19,7 +20,7 @@ export const Navbar = () => {
     <Box
       as="nav"
       role="navigation"
-      bg="#FAD02C"
+      bg="#f1b051"
       position="sticky"
       top="0"
       zIndex="sticky"
@@ -27,11 +28,18 @@ export const Navbar = () => {
       <Container>
         <PositionHolder minH="20">
           <MenuRoot>
-            <div className="flex items-center">
-              <div className="mr-auto">
+            <div className="flex w-[100%] justify-between items-center">
+              <Image
+                src="/images/ymg-logo-white.png"
+                alt="YMG Logo"
+                width={80}
+                height={80}
+                className="hidden md:block"
+              />
+              <div className="flex flex-row">
                 <Link
                   href="/"
-                  className={`${ebGaramond.className} mx-2 ${
+                  className={`${montserrat.className} mx-2 ${
                     isActive("/") ? "underline" : ""
                   }`}
                 >
@@ -39,7 +47,7 @@ export const Navbar = () => {
                 </Link>
                 <Link
                   href="/about-us"
-                  className={`${ebGaramond.className} mx-2 ${
+                  className={`${montserrat.className} mx-2 ${
                     isActive("/about-us") ? "underline" : ""
                   }`}
                 >

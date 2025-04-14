@@ -1,4 +1,4 @@
-import { ebGaramond } from "@/components/ui/fonts";
+import { montserrat } from "@/components/ui/fonts";
 import LandingBanner from "@/components/ui/landing-banner";
 import OurMission from "@/components/ui/ourMission";
 import TwoHalves from "@/components/ui/whoWeAre";
@@ -10,7 +10,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center max-w-full px-4 mx-auto space-y-4">
       <LandingBanner />
       <h1
-        className={`${ebGaramond.className} text-[#333652] text-4xl font-bold text-center`}
+        className={`${montserrat.className} text-[#1c272c] text-4xl font-bold text-center`}
       >
         Important YMG Announcement!
       </h1>
@@ -57,12 +57,12 @@ const leftContent = (
 const rightContent = (
   <div className="p-4">
     <h1
-      className={`${ebGaramond.className} text-[#333652] text-2xl lg:text-4xl font-bold`}
+      className={`${montserrat.className} text-[#1c272c] text-2xl lg:text-4xl font-bold`}
     >
       Vision Statement
     </h1>
     <ul
-      className={`${ebGaramond.className} text-[#333652] text-1xl lg:text-2xl list-disc pl-8`}
+      className={`${montserrat.className} text-[#1c272c] text-1xl lg:text-2xl list-disc pl-8`}
     >
       <li>To empower young men</li>
       <li>To grow in faith and identity as sons of God</li>

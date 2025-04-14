@@ -1,8 +1,8 @@
-import { EB_Garamond } from "next/font/google";
+import { Montserrat } from "next/font/google";
 
-export const ebGaramond = EB_Garamond({
+export const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
-  fallback: ["EB Garamond", "serif"]
+  fallback: ["Montserrat", "sans-serif"]
 });
