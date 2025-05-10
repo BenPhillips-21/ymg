@@ -53,6 +53,14 @@ export const Navbar = () => {
                 >
                   About Us
                 </Link>
+                <Link
+                  href="/donate"
+                  className={`${montserrat.className} mx-2 ${
+                    isActive("/donate") ? "underline" : ""
+                  }`}
+                >
+                  Donate
+                </Link>
               </div>
               <div className="flex flex-row">
                 <a
