@@ -8,6 +8,7 @@ import {
 } from "@stripe/react-stripe-js";
 
 const CheckoutPage = ({ amount }: { amount: number }) => {
+  const baseUrl = process.env.RAILWAY_PUBLIC_DOMAIN ? `http://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:3000';
     function convertToSubcurrency(amount: number, factor = 100) {
         return Math.round(amount * factor);
     }
@@ -50,7 +51,7 @@ const CheckoutPage = ({ amount }: { amount: number }) => {
       elements,
       clientSecret,
       confirmParams: {
-        return_url: `http://www.localhost:3000/payment-success`,
+        return_url: `${baseUrl}/payment-success`,
       },
     });
 
