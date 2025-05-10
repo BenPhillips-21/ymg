@@ -51,7 +51,7 @@ export const Navbar = () => {
                     isActive("/about-us") ? "underline" : ""
                   }`}
                 >
-                  About Us
+                  About
                 </Link>
                 <Link
                   href="/donate"

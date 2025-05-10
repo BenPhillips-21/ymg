@@ -8,7 +8,7 @@ import {
 } from "@stripe/react-stripe-js";
 
 const CheckoutPage = ({ amount }: { amount: number }) => {
-  const baseUrl = process.env.RAILWAY_PUBLIC_DOMAIN ? `http://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:3000';
+  const baseUrl = process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:3000';
     function convertToSubcurrency(amount: number, factor = 100) {
         return Math.round(amount * factor);
     }
