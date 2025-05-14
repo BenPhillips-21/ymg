@@ -53,14 +53,14 @@ export const Navbar = () => {
                 >
                   About
                 </Link>
-                <Link
+                {/* <Link
                   href="/donate"
                   className={`${montserrat.className} mx-2 ${
                     isActive("/donate") ? "underline" : ""
                   }`}
                 >
                   Donate
-                </Link>
+                </Link> */}
               </div>
               <div className="flex flex-row">
                 <a
