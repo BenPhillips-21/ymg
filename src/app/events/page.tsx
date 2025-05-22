@@ -7,13 +7,13 @@ import { CldImage } from "next-cloudinary";
 export default function Page() {
   return (
     <div className="flex flex-col text-center">
-      <h1 className={`${montserrat.className} text-2xl font-bold mt-2`}>
-        YMG regularly host two events...
+      <h1 className={`${montserrat.className} text-4xl underline font-bold mt-2`}>
+        YMG Events
       </h1>
-      <div className="flex flex-row">
+      <div className="flex flex-col md:flex-row">
         <div className="flex flex-col text-center m-5">
           <h1 className={`${montserrat.className} text-2xl font-bold`}>
-            YMG Brotherhood Nights
+            Brotherhood Nights
           </h1>
           <CldImage
             alt="YMG Brotherhood image"
