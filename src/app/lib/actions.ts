@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
 import { FormState } from "./types";
+import { revalidatePath } from "next/cache";
 
 export async function insertion(prevState: FormState, formData: FormData) {
   try {
@@ -50,6 +51,7 @@ export async function insertion(prevState: FormState, formData: FormData) {
         age: trimmedAge,
       });
 
+    revalidatePath('/users');
     return { message: 'Success! A confirmation email will be sent to the email address provided within 24 hours.' };
   } catch (error) {
     console.log(error);

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postbuild": "npx drizzle-kit migrate"
+    "postbuild": "npx drizzle-kit push"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.8.1",
