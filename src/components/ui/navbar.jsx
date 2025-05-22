@@ -53,6 +53,14 @@ export const Navbar = () => {
                 >
                   About
                 </Link>
+                <Link
+                  href="/events"
+                  className={`${montserrat.className} mx-2 ${
+                    isActive("/events") ? "underline" : ""
+                  }`}
+                >
+                  Events
+                </Link>
                 {/* <Link
                   href="/donate"
                   className={`${montserrat.className} mx-2 ${
