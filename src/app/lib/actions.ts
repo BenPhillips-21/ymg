@@ -2,11 +2,9 @@
 
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
-import { NextResponse } from "next/server";
 
-export async function insertion(formData: FormData) {
+export async function insertion(prevState: any, formData: FormData) {
   try {
-    console.log(formData);
     const nameRequest = formData.get('nameRequest') as string;
     const emailRequest = formData.get('emailRequest') as string;
     const numberRequest = formData.get('numberRequest') as string;
@@ -20,20 +18,20 @@ export async function insertion(formData: FormData) {
     const trimmedAge = ageRequest.trim();
   
       if (!trimmedName || trimmedName.length < 2) {
-        return NextResponse.json({ error: 'Name is required and must be at least 2 characters long.' }, { status: 400 });
+        return { message: 'Name is required and must be at least 2 characters long.' };
       }
       if (!trimmedEmail || !/\S+@\S+\.\S+/.test(trimmedEmail)) {
-        return NextResponse.json({ error: 'Valid email is required.' }, { status: 400 });
+        return { message: 'Invalid email format.' };
       }
       if (!trimmedNumber || !/^\d{10}$/.test(trimmedNumber)) {
-        return NextResponse.json({ error: 'Phone number is required and must be exactly 10 digits.' }, { status: 400 });
+        return { message: 'Phone number must be exactly 10 digits.' };
       }
       if (!trimmedLocation || trimmedLocation.length < 2) {
-        return NextResponse.json({ error: 'Location is required and must be at least 2 characters long.' }, { status: 400 });
+        return { message: 'Location is required and must be at least 2 characters long.' };
       }
       const parsedAge = parseInt(trimmedAge, 10);
       if (isNaN(parsedAge) || parsedAge < 0 || parsedAge > 99) {
-          return NextResponse.json({ error: 'Age is required and must be a valid number between 0 and 99.' }, { status: 400 });
+          return { message: 'Age must be a number between 0 and 120.' };
       }
   
     const users = await getAllUsers();
@@ -50,12 +48,11 @@ export async function insertion(formData: FormData) {
         location: trimmedLocation,
         age: trimmedAge,
       });
+
+    return { message: 'Success! A confirmation email will be sent to the email address provided within 24 hours.' };
   } catch (error) {
-    console.error("Error during user insertion:", error);
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 }
-    );
+    console.log(error);
+    return { message: 'Internal server error.' };
   }
 }
 

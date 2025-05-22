@@ -1,11 +1,19 @@
 import { insertion } from "@/app/lib/actions";
+import { useActionState } from "react";
+import { montserrat } from "@/components/ui/fonts";
+
+const initState = {
+  message: null,
+}
 
 export default function RegoForm() {
+  const [state, formAction] = useActionState(insertion, initState);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 font-sans">
+<div className={`min-h-screen flex items-center justify-center bg-gray-100 p-4 font-sans ${montserrat.className}`}>
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Rego Form</h1>
-        <form action={insertion} className="space-y-4">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">YMG Online Registration</h1>
+        <form action={formAction} className="space-y-4">
           <div>
             <label htmlFor="nameRequest" className="block text-sm font-medium text-gray-700 mb-1">Name:</label>
             <input
@@ -14,7 +22,7 @@ export default function RegoForm() {
               name="nameRequest"
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="John Doe"
+              placeholder="Paul"
               style={{ backgroundColor: 'white' }}
             />
           </div>
@@ -26,12 +34,12 @@ export default function RegoForm() {
               name="emailRequest"
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="john.doe@example.com"
+              placeholder="paul.apostle@example.com"
               style={{ backgroundColor: 'white' }}
             />
           </div>
           <div>
-            <label htmlFor="numberRequest" className="block text-sm font-medium text-gray-700 mb-1">Phone Number (10 digits):</label>
+            <label htmlFor="numberRequest" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
             <input
               type="text"
               id="numberRequest"
@@ -40,7 +48,7 @@ export default function RegoForm() {
               pattern="\d{10}"
               title="Phone number must be exactly 10 digits"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="1234567890"
+              placeholder="0417123456"
               style={{ backgroundColor: 'white' }}
             />
           </div>
@@ -52,7 +60,7 @@ export default function RegoForm() {
               name="locationRequest"
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Sydney, NSW"
+              placeholder="Sydney"
               style={{ backgroundColor: 'white' }}
             />
           </div>
@@ -76,6 +84,7 @@ export default function RegoForm() {
           >
             Submit
           </button>
+          <p>{state?.message}</p>
         </form>
       </div>
     </div>
