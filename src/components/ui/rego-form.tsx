@@ -1,8 +1,9 @@
 import { insertion } from "@/app/lib/actions";
 import { useActionState } from "react";
 import { montserrat } from "@/components/ui/fonts";
+import { FormState } from "@/app/lib/types";
 
-const initState = {
+const initState: FormState = {
   message: null,
 }
 

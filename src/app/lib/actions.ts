@@ -2,8 +2,9 @@
 
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
+import { FormState } from "./types";
 
-export async function insertion(prevState: any, formData: FormData) {
+export async function insertion(prevState: FormState, formData: FormData) {
   try {
     const nameRequest = formData.get('nameRequest') as string;
     const emailRequest = formData.get('emailRequest') as string;

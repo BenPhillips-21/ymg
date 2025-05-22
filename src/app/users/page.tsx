@@ -3,30 +3,25 @@ import { getAllUsers } from "../lib/actions";
 export default async function Users() {
   const users = await getAllUsers();
   return (
-    <main style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <table style={{ 
-        width: '100%', 
-        borderCollapse: 'collapse', 
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        backgroundColor: '#fff'
-      }}>
-        <thead style={{ backgroundColor: '#f2f2f2' }}>
+    <main className="p-5 font-sans">
+      <table className="w-full border-collapse shadow-lg bg-white rounded-lg overflow-hidden">
+        <thead className="bg-gray-100">
           <tr>
-            <th style={tableHeaderStyle}>Name</th>
-            <th style={tableHeaderStyle}>Email</th>
-            <th style={tableHeaderStyle}>Phone</th>
-            <th style={tableHeaderStyle}>Location</th>
-            <th style={tableHeaderStyle}>Age</th>
+            <th className="py-3 px-4 text-left text-gray-700 font-bold border-b-2 border-gray-300">Name</th>
+            <th className="py-3 px-4 text-left text-gray-700 font-bold border-b-2 border-gray-300">Email</th>
+            <th className="py-3 px-4 text-left text-gray-700 font-bold border-b-2 border-gray-300">Phone</th>
+            <th className="py-3 px-4 text-left text-gray-700 font-bold border-b-2 border-gray-300">Location</th>
+            <th className="py-3 px-4 text-left text-gray-700 font-bold border-b-2 border-gray-300">Age</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.id} style={{ borderBottom: '1px solid #ddd' }}>
-              <td style={tableCellStyle}>{user.name}</td>
-              <td style={tableCellStyle}>{user.email}</td>
-              <td style={tableCellStyle}>{user.phone}</td>
-              <td style={tableCellStyle}>{user.location}</td>
-              <td style={tableCellStyle}>{user.age}</td>
+            <tr key={user.id} className="border-b border-gray-200 last:border-b-0">
+              <td className="py-2 px-4 text-left text-gray-700">{user.name}</td>
+              <td className="py-2 px-4 text-left text-gray-700">{user.email}</td>
+              <td className="py-2 px-4 text-left text-gray-700">{user.phone}</td>
+              <td className="py-2 px-4 text-left text-gray-700">{user.location}</td>
+              <td className="py-2 px-4 text-left text-gray-700">{user.age}</td>
             </tr>
           ))}
         </tbody>
@@ -34,17 +29,3 @@ export default async function Users() {
     </main>
   );
 }
-
-const tableHeaderStyle = {
-  padding: '12px 15px',
-  textAlign: 'left',
-  color: '#555',
-  fontWeight: 'bold',
-  borderBottom: '2px solid #ddd'
-};
-
-const tableCellStyle = {
-  padding: '10px 15px',
-  textAlign: 'left',
-  color: '#666'
-};
