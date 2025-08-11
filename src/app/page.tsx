@@ -3,23 +3,11 @@ import LandingBanner from "@/components/ui/landing-banner";
 import OurMission from "@/components/ui/ourMission";
 import TwoHalves from "@/components/ui/whoWeAre";
 import ImageCarousel from "@/components/ui/image-carousel";
-import Image from "next/image";
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center max-w-full px-4 mx-auto space-y-4">
       <LandingBanner />
-      <h1
-        className={`${montserrat.className} text-[#1c272c] text-4xl font-bold text-center`}
-      >
-        Important YMG Announcement!
-      </h1>
-      <Image
-        src="/images/philippinesAnnouncement.png"
-        alt="Philippines Announcement"
-        width={500}
-        height={500}
-      />
       <OurMission />
       <div className="hidden lg:block">
         <TwoHalves leftContent={leftContent} rightContent={rightContent} />
