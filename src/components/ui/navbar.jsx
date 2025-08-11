@@ -34,7 +34,7 @@ export const Navbar = () => {
                 alt="YMG Logo"
                 width={80}
                 height={80}
-                className="hidden md:block"
+                className="md:block hidden"
               />
               <div className="flex flex-row">
                 <Link
@@ -66,23 +66,15 @@ export const Navbar = () => {
                   target="_blank"
                   className={`${montserrat.className} mx-2`}
                 >
-                  YMG Adelaide
+                  Adelaide
                 </Link>
-                {/* <Link
-                  href="/donate"
-                  className={`${montserrat.className} mx-2 ${
-                    isActive("/donate") ? "underline" : ""
-                  }`}
-                >
-                  Donate
-                </Link> */}
               </div>
               <div className="flex flex-row">
                 <a
                   href="https://www.facebook.com/YMGMovement"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mx-[10px]"
+                  className="mr-2 md:mx-[10px]"
                 >
                   <BsFacebook size={24} />
                 </a>
@@ -90,7 +82,7 @@ export const Navbar = () => {
                   href="https://www.youtube.com/@ymgmovement6738"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mx-[10px]"
+                  className="hidden md:inline-block md:mx-[10px]"
                 >
                   <BsYoutube size={24} />
                 </a>
@@ -98,7 +90,7 @@ export const Navbar = () => {
                   href="https://www.instagram.com/ymgmovement/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mx-[10px]"
+                  className="md:mx-[10px]"
                 >
                   <BsInstagram size={24} />
                 </a>
