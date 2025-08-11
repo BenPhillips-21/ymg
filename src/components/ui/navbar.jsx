@@ -7,7 +7,7 @@ import { MenuRoot } from "./menu";
 import { montserrat } from "./fonts";
 import { BsFacebook, BsInstagram, BsYoutube } from "react-icons/bs";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
+import Image from "next/legacy/image";
 
 export const Navbar = () => {
   const pathname = usePathname();
@@ -60,6 +60,13 @@ export const Navbar = () => {
                   }`}
                 >
                   Events
+                </Link>
+                <Link
+                  href="https://www.ymgadelaide.org.au/"
+                  target="_blank"
+                  className={`${montserrat.className} mx-2`}
+                >
+                  YMG Adelaide
                 </Link>
                 {/* <Link
                   href="/donate"

@@ -5,7 +5,7 @@ import { montserrat } from "@/components/ui/fonts";
 import { Main } from "@/components/ui/main";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { useState } from "react";
 
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {

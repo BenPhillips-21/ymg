@@ -1,6 +1,6 @@
 import { montserrat } from "@/components/ui/fonts";
 import { Main } from "@/components/ui/main";
-import Image from 'next/image'; // Assuming you're using Next.js Image component
+import Image from "next/legacy/image"; // Assuming you're using Next.js Image component
 
 export default function Page() {
   return (
