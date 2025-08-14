@@ -1,13 +1,21 @@
+'use client';
+
 import { montserrat } from "@/components/ui/fonts";
 import LandingBanner from "@/components/ui/landing-banner";
 import OurMission from "@/components/ui/ourMission";
 import TwoHalves from "@/components/ui/whoWeAre";
+import dynamic from "next/dynamic";
 import ImageCarousel from "@/components/ui/image-carousel";
+
+const Newsletter = dynamic(() => import('@/components/ui/newsletter'), {
+  ssr: false,
+})
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center max-w-full px-4 mx-auto space-y-4">
       <LandingBanner />
+      <Newsletter />
       <OurMission />
       <div className="hidden lg:block">
         <TwoHalves leftContent={leftContent} rightContent={rightContent} />
