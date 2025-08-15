@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { montserrat } from "@/components/ui/fonts";
 import LandingBanner from "@/components/ui/landing-banner";
@@ -7,9 +7,9 @@ import TwoHalves from "@/components/ui/whoWeAre";
 import dynamic from "next/dynamic";
 import ImageCarousel from "@/components/ui/image-carousel";
 
-const Newsletter = dynamic(() => import('@/components/ui/newsletter'), {
+const Newsletter = dynamic(() => import("@/components/ui/newsletter"), {
   ssr: false,
-})
+});
 
 export default function Home() {
   return (
