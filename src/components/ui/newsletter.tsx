@@ -65,7 +65,7 @@ export default function Newsletter() {
       </h1>
       <div className="w-full mb-4">
         <Document
-          file="/newsletter-Aug-2025.pdf"
+          file="/compressed-newsletter-Aug-2025.pdf"
           onLoadSuccess={onDocumentLoadSuccess}
         >
           {pagesToRender.map((p) => (
