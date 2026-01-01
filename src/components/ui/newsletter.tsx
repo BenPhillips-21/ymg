@@ -1,8 +1,11 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { pdfjs, Document, Page } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { montserrat } from "@/components/ui/fonts";
+import { cormorant, inter } from "@/components/ui/fonts";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.mjs`;
 
@@ -10,7 +13,9 @@ export default function Newsletter() {
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [pagesToRender, setPagesToRender] = useState<number[]>([1]);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024
+  );
 
   useEffect(() => {
     if (numPages) {
@@ -35,10 +40,7 @@ export default function Newsletter() {
     };
 
     window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
@@ -57,58 +59,76 @@ export default function Newsletter() {
   }
 
   return (
-    <div className="flex flex-col items-center p-4 bg-gray-100 rounded-lg shadow-md max-w-full overflow-x-hidden">
-      <h1 
-        className={`${montserrat.className} text-[#1c272c] text-2xl lg:text-4xl font-bold`}
-      >
-        Our Newsletter
-      </h1>
-      <div className="w-full mb-4">
-        <Document
-          file="/compressed-newsletter-Aug-2025.pdf"
-          onLoadSuccess={onDocumentLoadSuccess}
-        >
-          {pagesToRender.map((p) => (
-            <div
-              key={p}
-              className={`flex justify-center ${
-                pageNumber === p ? "" : "hidden"
-              }`}
-            >
-              {windowWidth <= 768 ? (
-                // Condition 1: Mobile
-                <Page pageNumber={p} width={300} />
-              ) : windowWidth > 1400 ? (
-                // Condition 2: Large Desktop
-                <Page pageNumber={p} height={800} />
-              ) : (
-                // Condition 3: Default Desktop
-                <Page pageNumber={p} height={620} />
-              )}
-            </div>
-          ))}
-        </Document>
-      </div>
+    <section className="py-20 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <span className={`${inter.className} text-[var(--accent-primary)] text-sm font-semibold uppercase tracking-widest`}>
+            Stay Connected
+          </span>
+          <h2 className={`${cormorant.className} text-4xl sm:text-5xl font-bold text-[var(--foreground)] mt-4`}>
+            Our Newsletter
+          </h2>
+          <div className="section-divider mt-6" />
+        </div>
 
-      <div className="flex items-center justify-between w-full max-w-sm px-4">
-        <button
-          onClick={goToPrevPage}
-          disabled={pageNumber <= 1}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md shadow hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-        >
-          Previous
-        </button>
-        <p className="text-gray-700">
-          Page {pageNumber} of {numPages || "..."}
-        </p>
-        <button
-          onClick={goToNextPage}
-          disabled={pageNumber >= (numPages || 1)}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md shadow hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-        >
-          Next
-        </button>
+        {/* PDF Viewer */}
+        <div className="card p-6 sm:p-8">
+          <div className="flex justify-center mb-6">
+            <Document
+              file="/compressed-newsletter-Aug-2025.pdf"
+              onLoadSuccess={onDocumentLoadSuccess}
+              loading={
+                <div className="flex items-center justify-center h-[400px]">
+                  <div className="w-10 h-10 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin" />
+                </div>
+              }
+            >
+              {pagesToRender.map((p) => (
+                <div
+                  key={p}
+                  className={`flex justify-center ${pageNumber === p ? "" : "hidden"}`}
+                >
+                  {windowWidth <= 768 ? (
+                    <Page pageNumber={p} width={280} className="rounded-lg overflow-hidden shadow-xl" />
+                  ) : windowWidth > 1400 ? (
+                    <Page pageNumber={p} height={700} className="rounded-lg overflow-hidden shadow-xl" />
+                  ) : (
+                    <Page pageNumber={p} height={550} className="rounded-lg overflow-hidden shadow-xl" />
+                  )}
+                </div>
+              ))}
+            </Document>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center justify-center gap-6">
+            <button
+              onClick={goToPrevPage}
+              disabled={pageNumber <= 1}
+              className="p-3 rounded-full bg-[var(--background-card)] border border-[var(--border-subtle)] text-[var(--foreground)] hover:border-[var(--accent-primary)] hover:text-[var(--accent-primary)] transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-[var(--border-subtle)] disabled:hover:text-[var(--foreground)]"
+              aria-label="Previous page"
+            >
+              <BsChevronLeft size={20} />
+            </button>
+            
+            <span className={`${inter.className} text-[var(--foreground-muted)]`}>
+              <span className="text-[var(--foreground)] font-medium">{pageNumber}</span>
+              {" / "}
+              <span>{numPages || "..."}</span>
+            </span>
+            
+            <button
+              onClick={goToNextPage}
+              disabled={pageNumber >= (numPages || 1)}
+              className="p-3 rounded-full bg-[var(--background-card)] border border-[var(--border-subtle)] text-[var(--foreground)] hover:border-[var(--accent-primary)] hover:text-[var(--accent-primary)] transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-[var(--border-subtle)] disabled:hover:text-[var(--foreground)]"
+              aria-label="Next page"
+            >
+              <BsChevronRight size={20} />
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

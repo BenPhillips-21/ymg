@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Provider } from "@/components/ui/provider";
-import Head from "next/head";
-import { Flex } from "@chakra-ui/react";
 import { Navbar } from "@/components/ui/navbar";
-import { Main } from "@/components/ui/main";
-import { Footer } from '@/components/ui/footer';
+import { Footer } from "@/components/ui/footer";
+import { cormorant, inter } from "@/components/ui/fonts";
 
 export const metadata: Metadata = {
-  title: "YMG Movement",
+  title: "YMG Movement | Young Men of God",
+  description: "A movement of 18-35 year old Catholic men seeking the fullness of life that only Jesus can give.",
 };
 
 export default function RootLayout({
@@ -17,19 +16,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
+    <html lang="en" suppressHydrationWarning className={`${cormorant.variable} ${inter.variable}`}>
+      <body className="min-h-screen flex flex-col pattern-overlay">
         <Provider>
-          <Flex direction="column" flex="1">
-            <Head>
-              <title>YMG</title>
-            </Head>
-            <Navbar />
-            <Main>
-              {children}
-            </Main>
-            <Footer />
-          </Flex>
+          <Navbar />
+          <main className="flex-1 pt-20">
+            {children}
+          </main>
+          <Footer />
         </Provider>
       </body>
     </html>

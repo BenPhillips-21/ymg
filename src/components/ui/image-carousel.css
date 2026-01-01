@@ -1,31 +1,16 @@
+/* Legacy carousel styles - kept for compatibility but largely unused with new component */
 .embla {
   overflow: hidden;
 }
 
-@media (max-width: 639px) { 
-  .embla__container {
-    margin-top: 40px;
-  }
-}
-
-
-  
 .embla__container {
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
-@media (max-width: 639px) {
-  .embla__container > *:nth-child(3),
-  .embla__container > *:nth-child(4) {
-    display: none;
-  }
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
 }
-  
-  .embla__slide {
-    flex: 0 0 100%;
-    min-width: 0;
-    display: flex;
-    justify-content: center;
-  }
