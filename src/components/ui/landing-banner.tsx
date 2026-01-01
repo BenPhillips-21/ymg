@@ -37,7 +37,7 @@ export default function LandingBanner() {
         <div className="section-divider my-8 opacity-0 animate-fade-in animate-delay-300" />
 
         {/* Tagline */}
-        <p className={`${inter.className} max-w-2xl text-lg sm:text-xl text-[var(--foreground-muted)] leading-relaxed opacity-0 animate-fade-in-up animate-delay-400`}>
+        <p className={`${inter.className} max-w-2xl text-lg sm:text-xl text-[var(--foreground)] leading-relaxed opacity-0 animate-fade-in-up animate-delay-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]`}>
           A movement of 18-35 year old Catholic men seeking the fullness of life that only Jesus can give.
         </p>
 
