@@ -1,7 +1,6 @@
 "use client";
 
 import { montserrat } from "@/components/ui/fonts";
-import RegoForm from "@/components/ui/rego-form";
 import { CldImage } from "next-cloudinary";
 
 export default function Page() {
@@ -34,7 +33,6 @@ export default function Page() {
           />
         </div>
       </div>
-      <RegoForm />
     </div>
   );
 }
