@@ -1,16 +1,17 @@
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { montserrat } from "./fonts";
+import landingBanner from "../../../public/images/landing-banner.jpg";
 
 export default function LandingBanner() {
   return (
     <div className="relative w-full" style={{ width: "100vw" }}>
       <div className="relative w-[100%] h-[550px] lg:h-[670px] mx-auto overflow-hidden">
         <Image
-          src="/images/landing-banner.jpg"
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center 95%"
+          src={landingBanner}
+          fill
+          style={{ objectFit: "cover", objectPosition: "center 95%" }}
           alt="Image of hikers on mountaintop above clouds"
+          placeholder="blur"
           priority
         />
       </div>
