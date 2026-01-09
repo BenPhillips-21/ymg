@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { BsFacebook, BsInstagram, BsYoutube } from "react-icons/bs";
 import { cormorant, inter } from "./fonts";
+import ymgLogo from "../../../public/images/ymg-logo-white.png";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -30,10 +31,11 @@ export const Navbar = () => {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-12 h-12 transition-transform duration-300 group-hover:scale-110">
               <Image
-                src="/images/ymg-logo-white.png"
+                src={ymgLogo}
                 alt="YMG Logo"
                 fill
                 className="object-contain"
+                placeholder="blur"
               />
             </div>
             <span className={`${cormorant.className} text-2xl font-bold text-gradient hidden sm:block`}>

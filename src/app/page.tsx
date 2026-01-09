@@ -3,12 +3,7 @@
 import LandingBanner from "@/components/ui/landing-banner";
 import OurMission from "@/components/ui/ourMission";
 import TwoHalves, { VisionStatement } from "@/components/ui/whoWeAre";
-import dynamic from "next/dynamic";
 import ImageCarousel from "@/components/ui/image-carousel";
-
-const Newsletter = dynamic(() => import("@/components/ui/newsletter"), {
-  ssr: false,
-});
 
 export default function Home() {
   return (
@@ -34,7 +29,6 @@ export default function Home() {
       />
       
       <ImageCarousel />
-      <Newsletter />
     </div>
   );
 }
