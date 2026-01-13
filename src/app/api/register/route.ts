@@ -4,6 +4,28 @@ import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+// Discount code configuration (must match frontend)
+interface DiscountCode {
+  code: string;
+  price: number;
+  validUntil?: Date;
+  description: string;
+}
+
+const DISCOUNT_CODES: DiscountCode[] = [
+  {
+    code: "SSE26",
+    price: 230,
+    validUntil: new Date("2026-01-31T23:59:59"),
+    description: "SSE26 discount",
+  },
+  {
+    code: "devtest123",
+    price: 0.05,
+    description: "Dev testing",
+  },
+];
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -69,12 +91,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Determine price based on date
+    // Determine price based on date and discount code
     const now = new Date();
     const earlyBirdDeadline = new Date("2026-04-30T23:59:59");
-    const expectedPrice = now <= earlyBirdDeadline ? 250 : 300;
+    const basePrice = now <= earlyBirdDeadline ? 250 : 300;
+    
+    let expectedPrice = basePrice;
+    let appliedDiscountCode: DiscountCode | null = null;
 
-    if (body.amount_paid !== expectedPrice) {
+    // Check for discount code
+    if (body.discount_code) {
+      const foundCode = DISCOUNT_CODES.find(
+        (dc) => dc.code.toLowerCase() === body.discount_code.toLowerCase()
+      );
+
+      if (!foundCode) {
+        return NextResponse.json(
+          { error: "Invalid discount code" },
+          { status: 400 }
+        );
+      }
+
+      // Check if code has expired
+      if (foundCode.validUntil && now > foundCode.validUntil) {
+        return NextResponse.json(
+          { error: "This discount code has expired" },
+          { status: 400 }
+        );
+      }
+
+      expectedPrice = foundCode.price;
+      appliedDiscountCode = foundCode;
+    }
+
+    // Allow small floating point differences for decimal prices
+    if (Math.abs(body.amount_paid - expectedPrice) > 0.01) {
       return NextResponse.json(
         { error: "Invalid registration price" },
         { status: 400 }
@@ -107,8 +158,9 @@ export async function POST(request: NextRequest) {
       photo_consent: body.photo_consent === "yes",
       marketing_consent: body.marketing_consent || false,
       registration_type: body.registration_type,
-      amount_paid: body.amount_paid,
+      amount_paid: expectedPrice,
       paid: false,
+      discount_code: appliedDiscountCode?.code || undefined,
     };
 
     // Insert registration into Supabase
@@ -129,6 +181,16 @@ export async function POST(request: NextRequest) {
     // Create Stripe Checkout Session
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     
+    // Build product name based on registration type
+    let productName = "YMG Power Retreat 2026";
+    if (appliedDiscountCode) {
+      productName += ` - Discount (${appliedDiscountCode.code})`;
+    } else if (body.registration_type === "early_bird") {
+      productName += " - Early Bird Registration";
+    } else {
+      productName += " - Standard Registration";
+    }
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -136,10 +198,10 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: "aud",
             product_data: {
-              name: `YMG Power Retreat 2026 - ${body.registration_type === "early_bird" ? "Early Bird" : "Standard"} Registration`,
+              name: productName,
               description: `Registration for ${body.full_name}`,
             },
-            unit_amount: body.amount_paid * 100, // Stripe expects cents
+            unit_amount: Math.round(expectedPrice * 100), // Stripe expects cents, round to handle decimals
           },
           quantity: 1,
         },
@@ -151,6 +213,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         registration_id: registration.id,
         email: body.email,
+        discount_code: appliedDiscountCode?.code || "",
       },
     });
 

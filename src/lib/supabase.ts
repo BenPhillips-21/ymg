@@ -53,4 +53,5 @@ export interface Registration {
   amount_paid: number;
   paid: boolean;
   stripe_session_id?: string;
+  discount_code?: string;
 }

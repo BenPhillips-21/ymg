@@ -68,11 +68,37 @@ const initialFormData: FormData = {
   marketing_consent: false,
 };
 
+// Discount code configuration
+interface DiscountCode {
+  code: string;
+  price: number;
+  validUntil?: Date;
+  description: string;
+}
+
+const DISCOUNT_CODES: DiscountCode[] = [
+  {
+    code: "SSE26",
+    price: 230,
+    validUntil: new Date("2026-01-31T23:59:59"),
+    description: "SSE26 discount",
+  },
+  {
+    code: "devtest123",
+    price: 0.05,
+    description: "Dev testing",
+  },
+];
+
 export default function PowerRetreatSignUp() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [discountCode, setDiscountCode] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
+  const [discountError, setDiscountError] = useState("");
+  const [discountSuccess, setDiscountSuccess] = useState("");
 
   const now = new Date();
   const earlyBirdDeadline = new Date("2026-04-30T23:59:59");
@@ -83,8 +109,48 @@ export default function PowerRetreatSignUp() {
   const isStandardAvailable = now >= standardStart && now <= registrationClose;
   const isRegistrationOpen = now <= registrationClose;
 
-  const currentPrice = isEarlyBirdAvailable ? 250 : 300;
-  const registrationType = isEarlyBirdAvailable ? "early_bird" : "standard";
+  const basePrice = isEarlyBirdAvailable ? 250 : 300;
+  const currentPrice = appliedDiscount ? appliedDiscount.price : basePrice;
+  const registrationType = appliedDiscount 
+    ? `discount_${appliedDiscount.code.toLowerCase()}` 
+    : (isEarlyBirdAvailable ? "early_bird" : "standard");
+
+  const applyDiscountCode = () => {
+    setDiscountError("");
+    setDiscountSuccess("");
+    
+    if (!discountCode.trim()) {
+      setDiscountError("Please enter a discount code");
+      return;
+    }
+
+    const foundCode = DISCOUNT_CODES.find(
+      (dc) => dc.code.toLowerCase() === discountCode.trim().toLowerCase()
+    );
+
+    if (!foundCode) {
+      setDiscountError("Invalid discount code");
+      setAppliedDiscount(null);
+      return;
+    }
+
+    // Check if code has expired
+    if (foundCode.validUntil && now > foundCode.validUntil) {
+      setDiscountError("This discount code has expired");
+      setAppliedDiscount(null);
+      return;
+    }
+
+    setAppliedDiscount(foundCode);
+    setDiscountSuccess(`Discount applied! New price: $${foundCode.price.toFixed(2)}`);
+  };
+
+  const removeDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountCode("");
+    setDiscountSuccess("");
+    setDiscountError("");
+  };
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -193,6 +259,7 @@ export default function PowerRetreatSignUp() {
           ...formData,
           registration_type: registrationType,
           amount_paid: currentPrice,
+          discount_code: appliedDiscount?.code || null,
         }),
       });
 
@@ -256,15 +323,67 @@ export default function PowerRetreatSignUp() {
         <div className="max-w-2xl mx-auto">
           <div className="card p-6 border-[var(--accent-primary)] border-2 text-center mb-8">
             <p className={`${inter.className} text-[var(--foreground-muted)] mb-2`}>
-              {isEarlyBirdAvailable ? "Early Bird Price" : "Standard Price"}
+              {appliedDiscount 
+                ? `Discount Applied (${appliedDiscount.code})` 
+                : (isEarlyBirdAvailable ? "Early Bird Price" : "Standard Price")}
             </p>
-            <span className={`${cormorant.className} text-5xl font-bold text-[var(--accent-primary)]`}>
-              ${currentPrice}
-            </span>
-            {isEarlyBirdAvailable && (
+            <div className="flex items-center justify-center gap-3">
+              {appliedDiscount && (
+                <span className={`${cormorant.className} text-2xl text-[var(--foreground-muted)] line-through`}>
+                  ${basePrice}
+                </span>
+              )}
+              <span className={`${cormorant.className} text-5xl font-bold text-[var(--accent-primary)]`}>
+                ${currentPrice.toFixed(2).replace(/\.00$/, '')}
+              </span>
+            </div>
+            {isEarlyBirdAvailable && !appliedDiscount && (
               <p className={`${inter.className} text-[var(--foreground-muted)] mt-2`}>
                 🎉 Early bird pricing available until April 30th!
               </p>
+            )}
+          </div>
+
+          {/* Discount Code Input */}
+          <div className="card p-6 mb-8">
+            <h3 className={`${inter.className} text-[var(--foreground)] font-medium mb-4`}>
+              Have a discount code?
+            </h3>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={discountCode}
+                onChange={(e) => {
+                  setDiscountCode(e.target.value);
+                  setDiscountError("");
+                }}
+                placeholder="Enter discount code"
+                className={`${inputClasses} flex-1`}
+                disabled={!!appliedDiscount}
+              />
+              {appliedDiscount ? (
+                <button
+                  type="button"
+                  onClick={removeDiscount}
+                  className="px-6 py-3 bg-red-500/20 border border-red-500 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+                >
+                  Remove
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={applyDiscountCode}
+                  className="px-6 py-3 bg-[var(--accent-primary)]/20 border border-[var(--accent-primary)] text-[var(--accent-primary)] rounded-lg hover:bg-[var(--accent-primary)]/30 transition-colors"
+                >
+                  Apply
+                </button>
+              )}
+            </div>
+            {discountError && (
+              <p className={`${inter.className} text-red-400 text-sm mt-2`}>{discountError}</p>
+            )}
+            {discountSuccess && (
+              <p className={`${inter.className} text-green-400 text-sm mt-2`}>{discountSuccess}</p>
             )}
           </div>
         </div>
