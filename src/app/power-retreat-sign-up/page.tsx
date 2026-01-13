@@ -1,0 +1,760 @@
+"use client";
+
+import { useState } from "react";
+import { cormorant, inter } from "@/components/ui/fonts";
+
+interface FormData {
+  // Personal Info
+  full_name: string;
+  date_of_birth: string;
+  mobile_number: string;
+  email: string;
+  city_suburb: string;
+  state: string;
+  country: string;
+  
+  // Dietary & Medical
+  dietary_requirements: string;
+  dietary_other: string;
+  medical_conditions: string;
+  medical_details: string;
+  
+  // Emergency Contact
+  emergency_contact_name: string;
+  emergency_contact_relationship: string;
+  emergency_contact_phone: string;
+  
+  // Faith & Background
+  is_catholic: string;
+  parish: string;
+  first_ymg_event: string;
+  how_heard: string;
+  how_heard_other: string;
+  
+  // Consent
+  confirms_18_or_older: boolean;
+  agrees_to_code_of_conduct: boolean;
+  photo_consent: string;
+  marketing_consent: boolean;
+}
+
+interface FormErrors {
+  [key: string]: string;
+}
+
+const initialFormData: FormData = {
+  full_name: "",
+  date_of_birth: "",
+  mobile_number: "",
+  email: "",
+  city_suburb: "",
+  state: "",
+  country: "",
+  dietary_requirements: "",
+  dietary_other: "",
+  medical_conditions: "",
+  medical_details: "",
+  emergency_contact_name: "",
+  emergency_contact_relationship: "",
+  emergency_contact_phone: "",
+  is_catholic: "",
+  parish: "",
+  first_ymg_event: "",
+  how_heard: "",
+  how_heard_other: "",
+  confirms_18_or_older: false,
+  agrees_to_code_of_conduct: false,
+  photo_consent: "",
+  marketing_consent: false,
+};
+
+export default function PowerRetreatSignUp() {
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const now = new Date();
+  const earlyBirdDeadline = new Date("2026-04-30T23:59:59");
+  const standardStart = new Date("2026-05-01T00:00:00");
+  const registrationClose = new Date("2026-06-30T23:59:59");
+  
+  const isEarlyBirdAvailable = now <= earlyBirdDeadline;
+  const isStandardAvailable = now >= standardStart && now <= registrationClose;
+  const isRegistrationOpen = now <= registrationClose;
+
+  const currentPrice = isEarlyBirdAvailable ? 250 : 300;
+  const registrationType = isEarlyBirdAvailable ? "early_bird" : "standard";
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    // Personal Info validation
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = "Full name is required";
+    }
+    if (!formData.date_of_birth) {
+      newErrors.date_of_birth = "Date of birth is required";
+    }
+    if (!formData.mobile_number.trim()) {
+      newErrors.mobile_number = "Mobile number is required";
+    } else if (!/^[\d\s+()-]{8,}$/.test(formData.mobile_number)) {
+      newErrors.mobile_number = "Please enter a valid phone number";
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+    if (!formData.city_suburb.trim()) {
+      newErrors.city_suburb = "City/Suburb is required";
+    }
+    if (!formData.state.trim()) {
+      newErrors.state = "State is required";
+    }
+    if (!formData.country.trim()) {
+      newErrors.country = "Country is required";
+    }
+
+    // Dietary & Medical
+    if (!formData.dietary_requirements) {
+      newErrors.dietary_requirements = "Please select dietary requirements";
+    }
+    if (formData.dietary_requirements === "other" && !formData.dietary_other.trim()) {
+      newErrors.dietary_other = "Please specify your dietary requirements";
+    }
+    if (!formData.medical_conditions) {
+      newErrors.medical_conditions = "Please indicate if you have medical conditions";
+    }
+    if (formData.medical_conditions === "yes" && !formData.medical_details.trim()) {
+      newErrors.medical_details = "Please provide details of your medical conditions";
+    }
+
+    // Emergency Contact
+    if (!formData.emergency_contact_name.trim()) {
+      newErrors.emergency_contact_name = "Emergency contact name is required";
+    }
+    if (!formData.emergency_contact_relationship.trim()) {
+      newErrors.emergency_contact_relationship = "Relationship is required";
+    }
+    if (!formData.emergency_contact_phone.trim()) {
+      newErrors.emergency_contact_phone = "Emergency contact phone is required";
+    }
+
+    // Consent
+    if (!formData.confirms_18_or_older) {
+      newErrors.confirms_18_or_older = "You must confirm you are 18 or older";
+    }
+    if (!formData.agrees_to_code_of_conduct) {
+      newErrors.agrees_to_code_of_conduct = "You must agree to the code of conduct";
+    }
+    if (!formData.photo_consent) {
+      newErrors.photo_consent = "Please select a photo consent option";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitError("");
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          registration_type: registrationType,
+          amount_paid: currentPrice,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed");
+      }
+
+      // Redirect to Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Something went wrong");
+      setIsSubmitting(false);
+    }
+  };
+
+  const inputClasses = "w-full px-4 py-3 bg-[var(--background)] border border-[var(--border-subtle)] rounded-lg text-[var(--foreground)] focus:outline-none focus:border-[var(--accent-primary)] transition-colors";
+  const labelClasses = `${inter.className} block text-[var(--foreground)] font-medium mb-2`;
+  const errorClasses = `${inter.className} text-red-400 text-sm mt-1`;
+  const sectionClasses = "card p-8 mb-8";
+
+  if (!isRegistrationOpen) {
+    return (
+      <div className="min-h-screen">
+        <section className="relative py-24 px-4 overflow-hidden">
+          <div className="absolute inset-0 bg-[var(--gradient-radial)] pointer-events-none" />
+          <div className="relative max-w-2xl mx-auto text-center">
+            <h1 className={`${cormorant.className} text-5xl font-bold text-[var(--foreground)] mb-6`}>
+              Registration Closed
+            </h1>
+            <p className={`${inter.className} text-[var(--foreground-muted)]`}>
+              Registration for this event has closed. Please contact us for more information.
+            </p>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative py-16 px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-[var(--gradient-radial)] pointer-events-none" />
+        <div className="relative max-w-4xl mx-auto text-center">
+          <span className={`${inter.className} text-[var(--accent-primary)] text-sm font-semibold uppercase tracking-widest`}>
+            Melbourne 2026
+          </span>
+          <h1 className={`${cormorant.className} text-5xl sm:text-6xl font-bold text-[var(--foreground)] mt-4`}>
+            Power Retreat Registration
+          </h1>
+          <div className="section-divider mt-8" />
+        </div>
+      </section>
+
+      {/* Pricing Info */}
+      <section className="py-8 px-4">
+        <div className="max-w-2xl mx-auto">
+          <div className="card p-6 border-[var(--accent-primary)] border-2 text-center mb-8">
+            <p className={`${inter.className} text-[var(--foreground-muted)] mb-2`}>
+              {isEarlyBirdAvailable ? "Early Bird Price" : "Standard Price"}
+            </p>
+            <span className={`${cormorant.className} text-5xl font-bold text-[var(--accent-primary)]`}>
+              ${currentPrice}
+            </span>
+            {isEarlyBirdAvailable && (
+              <p className={`${inter.className} text-[var(--foreground-muted)] mt-2`}>
+                🎉 Early bird pricing available until April 30th!
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Registration Form */}
+      <section className="py-8 px-4">
+        <div className="max-w-2xl mx-auto">
+          <form onSubmit={handleSubmit}>
+            {/* Personal Information */}
+            <div className={sectionClasses}>
+              <h2 className={`${cormorant.className} text-2xl font-bold text-[var(--foreground)] mb-6`}>
+                Personal Information
+              </h2>
+
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClasses}>
+                    Full Name <span className="text-red-400">*</span>
+                    <span className="text-[var(--foreground-muted)] font-normal text-sm ml-2">
+                      (as you would like it to appear on your name badge)
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    name="full_name"
+                    value={formData.full_name}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                  />
+                  {errors.full_name && <p className={errorClasses}>{errors.full_name}</p>}
+                </div>
+
+                <div>
+                  <label className={labelClasses}>
+                    Date of Birth <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="date_of_birth"
+                    value={formData.date_of_birth}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                  />
+                  {errors.date_of_birth && <p className={errorClasses}>{errors.date_of_birth}</p>}
+                </div>
+
+                <div>
+                  <label className={labelClasses}>
+                    Mobile Number <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="mobile_number"
+                    value={formData.mobile_number}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                  />
+                  {errors.mobile_number && <p className={errorClasses}>{errors.mobile_number}</p>}
+                </div>
+
+                <div>
+                  <label className={labelClasses}>
+                    Email Address <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                  />
+                  {errors.email && <p className={errorClasses}>{errors.email}</p>}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClasses}>
+                      City / Suburb <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="city_suburb"
+                      value={formData.city_suburb}
+                      onChange={handleInputChange}
+                      className={inputClasses}
+                    />
+                    {errors.city_suburb && <p className={errorClasses}>{errors.city_suburb}</p>}
+                  </div>
+
+                  <div>
+                    <label className={labelClasses}>
+                      State <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      className={inputClasses}
+                    />
+                    {errors.state && <p className={errorClasses}>{errors.state}</p>}
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelClasses}>
+                    Country <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                  />
+                  {errors.country && <p className={errorClasses}>{errors.country}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Dietary Requirements */}
+            <div className={sectionClasses}>
+              <h2 className={`${cormorant.className} text-2xl font-bold text-[var(--foreground)] mb-6`}>
+                Dietary Requirements
+              </h2>
+
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClasses}>
+                    Do you have any dietary requirements? <span className="text-red-400">*</span>
+                  </label>
+                  <div className="space-y-2">
+                    {["none", "vegetarian", "vegan", "gluten-free", "other"].map((option) => (
+                      <label key={option} className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="dietary_requirements"
+                          value={option}
+                          checked={formData.dietary_requirements === option}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 accent-[var(--accent-primary)]"
+                        />
+                        <span className={`${inter.className} text-[var(--foreground)] capitalize`}>
+                          {option === "none" ? "None" : option === "gluten-free" ? "Gluten-free" : option}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                  {errors.dietary_requirements && <p className={errorClasses}>{errors.dietary_requirements}</p>}
+                </div>
+
+                {formData.dietary_requirements === "other" && (
+                  <div>
+                    <label className={labelClasses}>
+                      Please specify <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="dietary_other"
+                      value={formData.dietary_other}
+                      onChange={handleInputChange}
+                      className={inputClasses}
+                    />
+                    {errors.dietary_other && <p className={errorClasses}>{errors.dietary_other}</p>}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Medical Conditions */}
+            <div className={sectionClasses}>
+              <h2 className={`${cormorant.className} text-2xl font-bold text-[var(--foreground)] mb-6`}>
+                Medical Information
+              </h2>
+
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClasses}>
+                    Do you have any medical conditions, allergies, or mobility needs we should be aware of? <span className="text-red-400">*</span>
+                  </label>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="medical_conditions"
+                        value="no"
+                        checked={formData.medical_conditions === "no"}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 accent-[var(--accent-primary)]"
+                      />
+                      <span className={`${inter.className} text-[var(--foreground)]`}>No</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="medical_conditions"
+                        value="yes"
+                        checked={formData.medical_conditions === "yes"}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 accent-[var(--accent-primary)]"
+                      />
+                      <span className={`${inter.className} text-[var(--foreground)]`}>Yes</span>
+                    </label>
+                  </div>
+                  {errors.medical_conditions && <p className={errorClasses}>{errors.medical_conditions}</p>}
+                </div>
+
+                {formData.medical_conditions === "yes" && (
+                  <div>
+                    <label className={labelClasses}>
+                      Please provide details <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="medical_details"
+                      value={formData.medical_details}
+                      onChange={handleInputChange}
+                      rows={3}
+                      className={inputClasses}
+                    />
+                    {errors.medical_details && <p className={errorClasses}>{errors.medical_details}</p>}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Emergency Contact */}
+            <div className={sectionClasses}>
+              <h2 className={`${cormorant.className} text-2xl font-bold text-[var(--foreground)] mb-6`}>
+                Emergency Contact
+              </h2>
+
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClasses}>
+                    Emergency Contact Name <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="emergency_contact_name"
+                    value={formData.emergency_contact_name}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                  />
+                  {errors.emergency_contact_name && <p className={errorClasses}>{errors.emergency_contact_name}</p>}
+                </div>
+
+                <div>
+                  <label className={labelClasses}>
+                    Relationship to You <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="emergency_contact_relationship"
+                    value={formData.emergency_contact_relationship}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                  />
+                  {errors.emergency_contact_relationship && <p className={errorClasses}>{errors.emergency_contact_relationship}</p>}
+                </div>
+
+                <div>
+                  <label className={labelClasses}>
+                    Emergency Contact Phone Number <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="emergency_contact_phone"
+                    value={formData.emergency_contact_phone}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                  />
+                  {errors.emergency_contact_phone && <p className={errorClasses}>{errors.emergency_contact_phone}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Faith & Background */}
+            <div className={sectionClasses}>
+              <h2 className={`${cormorant.className} text-2xl font-bold text-[var(--foreground)] mb-2`}>
+                Faith & Background
+              </h2>
+              <p className={`${inter.className} text-[var(--foreground-muted)] text-sm mb-6`}>
+                Optional but helpful
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClasses}>Are you Catholic?</label>
+                  <div className="space-y-2">
+                    {["yes", "no", "exploring"].map((option) => (
+                      <label key={option} className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="is_catholic"
+                          value={option}
+                          checked={formData.is_catholic === option}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 accent-[var(--accent-primary)]"
+                        />
+                        <span className={`${inter.className} text-[var(--foreground)] capitalize`}>
+                          {option === "exploring" ? "Exploring faith" : option === "yes" ? "Yes" : "No"}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelClasses}>Parish / Church / Community (if any)</label>
+                  <input
+                    type="text"
+                    name="parish"
+                    value={formData.parish}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClasses}>Is this your first Young Men of God event?</label>
+                  <div className="space-y-2">
+                    {["yes", "no"].map((option) => (
+                      <label key={option} className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="first_ymg_event"
+                          value={option}
+                          checked={formData.first_ymg_event === option}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 accent-[var(--accent-primary)]"
+                        />
+                        <span className={`${inter.className} text-[var(--foreground)] capitalize`}>
+                          {option === "yes" ? "Yes" : "No"}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelClasses}>How did you hear about this conference?</label>
+                  <div className="space-y-2">
+                    {["friend", "parish", "social_media", "ymg_group", "other"].map((option) => (
+                      <label key={option} className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="how_heard"
+                          value={option}
+                          checked={formData.how_heard === option}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 accent-[var(--accent-primary)]"
+                        />
+                        <span className={`${inter.className} text-[var(--foreground)]`}>
+                          {option === "friend" ? "Friend" : 
+                           option === "parish" ? "Parish" : 
+                           option === "social_media" ? "Social Media" : 
+                           option === "ymg_group" ? "YMG Group" : "Other"}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {formData.how_heard === "other" && (
+                  <div>
+                    <label className={labelClasses}>Please specify</label>
+                    <input
+                      type="text"
+                      name="how_heard_other"
+                      value={formData.how_heard_other}
+                      onChange={handleInputChange}
+                      className={inputClasses}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Safeguarding & Consent */}
+            <div className={sectionClasses}>
+              <h2 className={`${cormorant.className} text-2xl font-bold text-[var(--foreground)] mb-6`}>
+                Safeguarding & Consent
+              </h2>
+
+              <div className="space-y-4">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="confirms_18_or_older"
+                    checked={formData.confirms_18_or_older}
+                    onChange={handleInputChange}
+                    className="w-5 h-5 mt-0.5 accent-[var(--accent-primary)]"
+                  />
+                  <span className={`${inter.className} text-[var(--foreground)]`}>
+                    I confirm that I am 18 years or older. <span className="text-red-400">*</span>
+                  </span>
+                </label>
+                {errors.confirms_18_or_older && <p className={errorClasses}>{errors.confirms_18_or_older}</p>}
+
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="agrees_to_code_of_conduct"
+                    checked={formData.agrees_to_code_of_conduct}
+                    onChange={handleInputChange}
+                    className="w-5 h-5 mt-0.5 accent-[var(--accent-primary)]"
+                  />
+                  <span className={`${inter.className} text-[var(--foreground)]`}>
+                    I agree to follow the code of conduct and event guidelines. <span className="text-red-400">*</span>
+                  </span>
+                </label>
+                {errors.agrees_to_code_of_conduct && <p className={errorClasses}>{errors.agrees_to_code_of_conduct}</p>}
+              </div>
+            </div>
+
+            {/* Photos & Videos */}
+            <div className={sectionClasses}>
+              <h2 className={`${cormorant.className} text-2xl font-bold text-[var(--foreground)] mb-6`}>
+                Photos & Videos
+              </h2>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="photo_consent"
+                    value="yes"
+                    checked={formData.photo_consent === "yes"}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 accent-[var(--accent-primary)]"
+                  />
+                  <span className={`${inter.className} text-[var(--foreground)]`}>
+                    I consent to photos and videos being taken during the event for ministry purposes.
+                  </span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="photo_consent"
+                    value="no"
+                    checked={formData.photo_consent === "no"}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 accent-[var(--accent-primary)]"
+                  />
+                  <span className={`${inter.className} text-[var(--foreground)]`}>
+                    I do not consent.
+                  </span>
+                </label>
+              </div>
+              {errors.photo_consent && <p className={errorClasses}>{errors.photo_consent}</p>}
+            </div>
+
+            {/* Communication */}
+            <div className={sectionClasses}>
+              <h2 className={`${cormorant.className} text-2xl font-bold text-[var(--foreground)] mb-6`}>
+                Communication
+              </h2>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="marketing_consent"
+                  checked={formData.marketing_consent}
+                  onChange={handleInputChange}
+                  className="w-5 h-5 mt-0.5 accent-[var(--accent-primary)]"
+                />
+                <span className={`${inter.className} text-[var(--foreground)]`}>
+                  I would like to receive updates about future Young Men of God events and formation opportunities.
+                </span>
+              </label>
+            </div>
+
+            {/* Submit */}
+            {submitError && (
+              <div className="card p-4 mb-8 border-red-500 border bg-red-500/10">
+                <p className={`${inter.className} text-red-400`}>{submitError}</p>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn-primary w-full py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Processing..." : `Proceed to Payment – $${currentPrice}`}
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+  );
+}

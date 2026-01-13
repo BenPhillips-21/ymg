@@ -13,12 +13,12 @@ const TwoHalves = ({ leftContent, rightContent }: TwoHalvesProps) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="card p-2 overflow-hidden glow-accent">
-            {leftContent}
-          </div>
+        {leftContent}
+      </div>
 
           {/* Right Content */}
           <div>
-            {rightContent}
+        {rightContent}
           </div>
         </div>
       </div>

@@ -19,11 +19,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${cormorant.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col pattern-overlay">
         <Provider>
-          <Navbar />
+            <Navbar />
           <main className="flex-1 pt-20">
-            {children}
+              {children}
           </main>
-          <Footer />
+            <Footer />
         </Provider>
       </body>
     </html>

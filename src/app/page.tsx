@@ -4,11 +4,13 @@ import LandingBanner from "@/components/ui/landing-banner";
 import OurMission from "@/components/ui/ourMission";
 import TwoHalves, { VisionStatement } from "@/components/ui/whoWeAre";
 import ImageCarousel from "@/components/ui/image-carousel";
+import Announcement from "@/components/ui/announcement";
 
 export default function Home() {
   return (
     <div className="flex flex-col">
       <LandingBanner />
+      <Announcement />
       <OurMission />
       
       {/* Vision Section with Video */}

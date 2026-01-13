@@ -30,7 +30,7 @@ export default function LandingBanner() {
           </h1>
           <h1 className={`${cormorant.className} text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-gradient tracking-tight mt-2`}>
             OF GOD
-          </h1>
+        </h1>
         </div>
 
         {/* Divider */}

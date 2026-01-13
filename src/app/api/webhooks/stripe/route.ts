@@ -1,0 +1,160 @@
+import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase";
+import Stripe from "stripe";
+import { Resend } from "resend";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const resend = new Resend(process.env.RESEND_API_KEY);
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || "ymgmovementaustralia@gmail.com";
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.text();
+    const signature = request.headers.get("stripe-signature");
+
+    if (!signature) {
+      return NextResponse.json(
+        { error: "Missing stripe-signature header" },
+        { status: 400 }
+      );
+    }
+
+    let event: Stripe.Event;
+
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    } catch (err) {
+      console.error("Webhook signature verification failed:", err);
+      return NextResponse.json(
+        { error: "Invalid signature" },
+        { status: 400 }
+      );
+    }
+
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const registrationId = session.metadata?.registration_id;
+
+      if (!registrationId) {
+        console.error("No registration_id in session metadata");
+        return NextResponse.json(
+          { error: "Missing registration_id" },
+          { status: 400 }
+        );
+      }
+
+      // Update registration as paid
+      const { data: registration, error: updateError } = await supabaseAdmin
+        .from("registrations")
+        .update({ paid: true })
+        .eq("id", registrationId)
+        .select()
+        .single();
+
+      if (updateError) {
+        console.error("Failed to update registration:", updateError);
+        return NextResponse.json(
+          { error: "Failed to update registration" },
+          { status: 500 }
+        );
+      }
+
+      // Send confirmation email
+      try {
+        await resend.emails.send({
+          from: "YMG Registration <onboarding@resend.dev>",
+          to: NOTIFICATION_EMAIL,
+          subject: `New Power Retreat Registration: ${registration.full_name}`,
+          html: generateEmailHtml(registration),
+        });
+      } catch (emailError) {
+        console.error("Failed to send email:", emailError);
+        // Don't fail the webhook if email fails
+      }
+    }
+
+    return NextResponse.json({ received: true });
+  } catch (error) {
+    console.error("Webhook error:", error);
+    return NextResponse.json(
+      { error: "Webhook handler failed" },
+      { status: 500 }
+    );
+  }
+}
+
+function generateEmailHtml(registration: Record<string, unknown>): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #d4a853; color: #0a0f14; padding: 20px; text-align: center; }
+        .section { margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+        .section h3 { margin-top: 0; color: #0a0f14; border-bottom: 2px solid #d4a853; padding-bottom: 10px; }
+        .field { margin: 10px 0; }
+        .label { font-weight: bold; color: #666; }
+        .value { color: #333; }
+        .paid-badge { background: #22c55e; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>🎉 New Power Retreat Registration</h1>
+          <span class="paid-badge">PAID - $${registration.amount_paid}</span>
+        </div>
+
+        <div class="section">
+          <h3>Personal Information</h3>
+          <div class="field"><span class="label">Full Name:</span> <span class="value">${registration.full_name}</span></div>
+          <div class="field"><span class="label">Date of Birth:</span> <span class="value">${registration.date_of_birth}</span></div>
+          <div class="field"><span class="label">Mobile:</span> <span class="value">${registration.mobile_number}</span></div>
+          <div class="field"><span class="label">Email:</span> <span class="value">${registration.email}</span></div>
+          <div class="field"><span class="label">Location:</span> <span class="value">${registration.city_suburb}, ${registration.state}, ${registration.country}</span></div>
+        </div>
+
+        <div class="section">
+          <h3>Dietary & Medical</h3>
+          <div class="field"><span class="label">Dietary Requirements:</span> <span class="value">${registration.dietary_requirements}${registration.dietary_other ? ` (${registration.dietary_other})` : ""}</span></div>
+          <div class="field"><span class="label">Medical Conditions:</span> <span class="value">${registration.medical_conditions}${registration.medical_details ? ` - ${registration.medical_details}` : ""}</span></div>
+        </div>
+
+        <div class="section">
+          <h3>Emergency Contact</h3>
+          <div class="field"><span class="label">Name:</span> <span class="value">${registration.emergency_contact_name}</span></div>
+          <div class="field"><span class="label">Relationship:</span> <span class="value">${registration.emergency_contact_relationship}</span></div>
+          <div class="field"><span class="label">Phone:</span> <span class="value">${registration.emergency_contact_phone}</span></div>
+        </div>
+
+        <div class="section">
+          <h3>Faith & Background</h3>
+          <div class="field"><span class="label">Catholic:</span> <span class="value">${registration.is_catholic || "Not specified"}</span></div>
+          <div class="field"><span class="label">Parish:</span> <span class="value">${registration.parish || "Not specified"}</span></div>
+          <div class="field"><span class="label">First YMG Event:</span> <span class="value">${registration.first_ymg_event || "Not specified"}</span></div>
+          <div class="field"><span class="label">How Heard:</span> <span class="value">${registration.how_heard || "Not specified"}${registration.how_heard_other ? ` (${registration.how_heard_other})` : ""}</span></div>
+        </div>
+
+        <div class="section">
+          <h3>Consent</h3>
+          <div class="field"><span class="label">Confirms 18+:</span> <span class="value">${registration.confirms_18_or_older ? "Yes" : "No"}</span></div>
+          <div class="field"><span class="label">Agrees to Code of Conduct:</span> <span class="value">${registration.agrees_to_code_of_conduct ? "Yes" : "No"}</span></div>
+          <div class="field"><span class="label">Photo Consent:</span> <span class="value">${registration.photo_consent ? "Yes" : "No"}</span></div>
+          <div class="field"><span class="label">Marketing Consent:</span> <span class="value">${registration.marketing_consent ? "Yes" : "No"}</span></div>
+        </div>
+
+        <div class="section">
+          <h3>Registration Details</h3>
+          <div class="field"><span class="label">Type:</span> <span class="value">${registration.registration_type === "early_bird" ? "Early Bird" : "Standard"}</span></div>
+          <div class="field"><span class="label">Amount Paid:</span> <span class="value">$${registration.amount_paid} AUD</span></div>
+          <div class="field"><span class="label">Registration ID:</span> <span class="value">${registration.id}</span></div>
+          <div class="field"><span class="label">Registered At:</span> <span class="value">${new Date(registration.created_at as string).toLocaleString()}</span></div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}

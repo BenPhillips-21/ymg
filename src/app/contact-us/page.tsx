@@ -75,8 +75,8 @@ export default function ContactPage() {
             </h2>
             <p className={`${inter.className} text-[var(--foreground-muted)] mt-3`}>
               Follow us on social media to stay updated
-            </p>
-          </div>
+        </p>
+      </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {socialLinks.map((social) => (

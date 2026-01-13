@@ -23,7 +23,7 @@ export default function EventsPage() {
         
         <div className="relative max-w-4xl mx-auto text-center">
           <h1 className={`${cormorant.className} text-4xl sm:text-5xl font-bold text-[var(--foreground)] mt-3`}>
-            YMG Events
+        YMG Events
           </h1>
           <div className="section-divider mt-5" />
         </div>
@@ -47,7 +47,7 @@ export default function EventsPage() {
             </div>
             {/* YMG Philippines */}
             <div className="card overflow-hidden">
-              <CldImage
+          <CldImage
                 alt="YMG Philippines 2026"
                 src="ymgPhillipines26_lp6i8t"
                 width={600}
@@ -55,11 +55,11 @@ export default function EventsPage() {
                 placeholder="blur"
                 blurDataURL={getBlurDataUrl("ymgPhillipines26_lp6i8t")}
                 className="w-full h-auto"
-              />
-            </div>
+          />
+        </div>
             {/* YMG Melbourne Conference */}
             <div className="card overflow-hidden">
-              <CldImage
+          <CldImage
                 alt="YMG Melbourne Conference 2026"
                 src="ymgMelbConf26_blmot4"
                 width={600}
@@ -67,9 +67,9 @@ export default function EventsPage() {
                 placeholder="blur"
                 blurDataURL={getBlurDataUrl("ymgMelbConf26_blmot4")}
                 className="w-full h-auto"
-              />
-            </div>
-          </div>
+          />
+        </div>
+      </div>
         </div>
       </section>
     </div>

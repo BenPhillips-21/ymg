@@ -64,7 +64,7 @@ export default function ImageCarousel() {
             Life in YMG
           </h2>
           <div className="section-divider mt-6" />
-        </div>
+          </div>
 
         {/* Carousel */}
         <div className="relative">
@@ -95,25 +95,25 @@ export default function ImageCarousel() {
                 >
                   <div className="card overflow-hidden group">
                     <div className="relative aspect-[4/3] overflow-hidden">
-                      <CldImage
+            <CldImage
                         alt={`YMG community photo ${index + 1}`}
                         src={image.src}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                         placeholder="blur"
                         blurDataURL={getBlurDataUrl(image.src)}
-                        crop={{
+              crop={{
                           type: "fill",
-                          source: true,
-                        }}
-                      />
+                source: true,
+              }}
+            />
                       {/* Overlay on hover */}
                       <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-transparent opacity-0 group-hover:opacity-60 transition-opacity duration-300" />
-                    </div>
-                  </div>
-                </div>
+          </div>
+          </div>
+          </div>
               ))}
-            </div>
+          </div>
           </div>
         </div>
       </div>

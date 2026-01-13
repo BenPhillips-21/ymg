@@ -1,7 +1,7 @@
 import { cormorant, inter } from "./fonts";
 
 export default function OurMission() {
-  return (
+    return (
     <section id="mission" className="relative py-24 px-4 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-[var(--gradient-radial)] pointer-events-none" />
@@ -41,6 +41,6 @@ export default function OurMission() {
           </div>
         </div>
       </div>
-    </section>
-  );
-}
+      </section>
+    );
+  }
