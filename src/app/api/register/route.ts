@@ -21,8 +21,13 @@ const DISCOUNT_CODES: DiscountCode[] = [
   },
   {
     code: "devtest123",
-    price: 0.05,
+    price: 1,
     description: "Dev testing",
+  },
+  {
+    code: "PADRE",
+    price: 200,
+    description: "For Priests",
   },
 ];
 
