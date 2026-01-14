@@ -148,6 +148,7 @@ export async function POST(request: NextRequest) {
       emergency_contact_name: body.emergency_contact_name,
       emergency_contact_relationship: body.emergency_contact_relationship,
       emergency_contact_phone: body.emergency_contact_phone,
+      vocation_status: body.vocation_status || null,
       is_catholic: body.is_catholic || null,
       parish: body.parish || null,
       first_ymg_event: body.first_ymg_event || null,

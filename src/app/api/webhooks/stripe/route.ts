@@ -60,16 +60,30 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Send confirmation email
+      // Send notification email to admin
       try {
         await resend.emails.send({
-          from: "YMG Registration <onboarding@resend.dev>",
+          from: "YMG Registration <noreply@mail.ymgmovement.org.au>",
           to: NOTIFICATION_EMAIL,
           subject: `New Power Retreat Registration: ${registration.full_name}`,
-          html: generateEmailHtml(registration),
+          html: generateAdminEmailHtml(registration),
         });
       } catch (emailError) {
-        console.error("Failed to send email:", emailError);
+        console.error("Failed to send admin notification email:", emailError);
+        // Don't fail the webhook if email fails
+      }
+
+      // Send confirmation email to registrant
+      try {
+        await resend.emails.send({
+          from: "Young Men of God <noreply@mail.ymgmovement.org.au>",
+          to: registration.email,
+          replyTo: "ymgmovementaustralia@gmail.com",
+          subject: "Your Power Retreat Registration Confirmation",
+          html: generateRegistrantEmailHtml(),
+        });
+      } catch (emailError) {
+        console.error("Failed to send registrant confirmation email:", emailError);
         // Don't fail the webhook if email fails
       }
     }
@@ -84,7 +98,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function generateEmailHtml(registration: Record<string, unknown>): string {
+function generateAdminEmailHtml(registration: Record<string, unknown>): string {
   return `
     <!DOCTYPE html>
     <html>
@@ -132,6 +146,7 @@ function generateEmailHtml(registration: Record<string, unknown>): string {
 
         <div class="section">
           <h3>Faith & Background</h3>
+          <div class="field"><span class="label">Vocation Status:</span> <span class="value">${registration.vocation_status ? String(registration.vocation_status).replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) : "Not specified"}</span></div>
           <div class="field"><span class="label">Catholic:</span> <span class="value">${registration.is_catholic || "Not specified"}</span></div>
           <div class="field"><span class="label">Parish:</span> <span class="value">${registration.parish || "Not specified"}</span></div>
           <div class="field"><span class="label">First YMG Event:</span> <span class="value">${registration.first_ymg_event || "Not specified"}</span></div>
@@ -150,8 +165,147 @@ function generateEmailHtml(registration: Record<string, unknown>): string {
           <h3>Registration Details</h3>
           <div class="field"><span class="label">Type:</span> <span class="value">${registration.registration_type === "early_bird" ? "Early Bird" : "Standard"}</span></div>
           <div class="field"><span class="label">Amount Paid:</span> <span class="value">$${registration.amount_paid} AUD</span></div>
+          <div class="field"><span class="label">Discount Code:</span> <span class="value">${registration.discount_code || "None"}</span></div>
           <div class="field"><span class="label">Registration ID:</span> <span class="value">${registration.id}</span></div>
           <div class="field"><span class="label">Registered At:</span> <span class="value">${new Date(registration.created_at as string).toLocaleString()}</span></div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+function generateRegistrantEmailHtml(): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { 
+          font-family: Georgia, 'Times New Roman', serif; 
+          line-height: 1.8; 
+          color: #333; 
+          background-color: #f9f9f9;
+          margin: 0;
+          padding: 0;
+        }
+        .container { 
+          max-width: 600px; 
+          margin: 0 auto; 
+          padding: 40px 20px;
+          background-color: #ffffff;
+        }
+        .header { 
+          text-align: center; 
+          padding-bottom: 30px;
+          border-bottom: 2px solid #d4a853;
+          margin-bottom: 30px;
+        }
+        .header h1 {
+          color: #0a0f14;
+          font-size: 28px;
+          margin: 0;
+          font-weight: normal;
+        }
+        .header .subtitle {
+          color: #d4a853;
+          font-size: 14px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          margin-top: 10px;
+        }
+        .content {
+          color: #444;
+          font-size: 16px;
+        }
+        .content p {
+          margin: 0 0 20px 0;
+        }
+        .greeting {
+          font-style: italic;
+          color: #0a0f14;
+        }
+        .list {
+          margin: 20px 0;
+          padding-left: 30px;
+        }
+        .list li {
+          margin: 10px 0;
+          color: #555;
+        }
+        .highlight {
+          background-color: #fdf6e3;
+          padding: 20px;
+          border-left: 4px solid #d4a853;
+          margin: 25px 0;
+        }
+        .signature {
+          margin-top: 40px;
+          padding-top: 20px;
+          border-top: 1px solid #eee;
+        }
+        .signature p {
+          margin: 5px 0;
+        }
+        .signature .name {
+          font-weight: bold;
+          color: #0a0f14;
+        }
+        .signature .title {
+          font-style: italic;
+          color: #666;
+          font-size: 14px;
+        }
+        .footer {
+          margin-top: 40px;
+          text-align: center;
+          font-size: 12px;
+          color: #999;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Young Men of God</h1>
+          <div class="subtitle">Men's Conference 2026</div>
+        </div>
+
+        <div class="content">
+          <p class="greeting">Dear Brother in Christ,</p>
+
+          <p>Thank you for registering for the Young Men of God Men's Conference.</p>
+
+          <p>We are grateful for your response to this call, and we look forward to journeying with you during this powerful weekend of faith, brotherhood, and renewal.</p>
+
+          <p>Your registration has been received successfully. Over the coming weeks, we will be in touch via email with further important details, including:</p>
+
+          <ul class="list">
+            <li>Program schedule</li>
+            <li>Packing and arrival information</li>
+            <li>Accommodation details</li>
+            <li>What to expect during the conference</li>
+          </ul>
+
+          <div class="highlight">
+            <p style="margin: 0;"><strong>Please keep an eye on your inbox</strong> and ensure our emails do not go to your spam folder.</p>
+          </div>
+
+          <p>In the meantime, please keep this conference and all participants in your prayers as we prepare together.</p>
+
+          <p>If you have any questions, feel free to contact us by replying to this email — <a href="mailto:ymgmovementaustralia@gmail.com" style="color: #d4a853;">ymgmovementaustralia@gmail.com</a>.</p>
+
+          <p>May the Lord bless you and guide you as you prepare to go deeper, grow stronger, and step forward in His power.</p>
+
+          <div class="signature">
+            <p>With prayers and blessings,</p>
+            <p class="name">Fr Terrence Shanaka MGL</p>
+            <p class="title">Chaplain – Young Men of God Movement and team</p>
+          </div>
+        </div>
+
+        <div class="footer">
+          <p>Young Men of God Movement Australia</p>
         </div>
       </div>
     </body>

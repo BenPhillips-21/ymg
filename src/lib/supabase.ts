@@ -36,6 +36,7 @@ export interface Registration {
   emergency_contact_phone: string;
   
   // Faith & Background
+  vocation_status?: string;
   is_catholic?: string;
   parish?: string;
   first_ymg_event?: string;

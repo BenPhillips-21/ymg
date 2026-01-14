@@ -25,6 +25,8 @@ interface FormData {
   emergency_contact_phone: string;
   
   // Faith & Background
+  is_clergy: string;
+  vocation_status: string;
   is_catholic: string;
   parish: string;
   first_ymg_event: string;
@@ -57,6 +59,8 @@ const initialFormData: FormData = {
   emergency_contact_name: "",
   emergency_contact_relationship: "",
   emergency_contact_phone: "",
+  is_clergy: "no",
+  vocation_status: "layperson",
   is_catholic: "",
   parish: "",
   first_ymg_event: "",
@@ -85,8 +89,13 @@ const DISCOUNT_CODES: DiscountCode[] = [
   },
   {
     code: "devtest123",
-    price: 0.05,
+    price: 1,
     description: "Dev testing",
+  },
+  {
+    code: "PADRE",
+    price: 200,
+    description: "For Priests",
   },
 ];
 
@@ -338,9 +347,15 @@ export default function PowerRetreatSignUp() {
               </span>
             </div>
             {isEarlyBirdAvailable && !appliedDiscount && (
-              <p className={`${inter.className} text-[var(--foreground-muted)] mt-2`}>
-                🎉 Early bird pricing available until April 30th!
-              </p>
+              <div>
+                <p className={`${inter.className} text-[var(--foreground-muted)] mt-2`}>
+                  🚨 Early bird pricing available only until April 30th! 🚨
+                </p>
+                <p className={`${inter.className} text-[var(--foreground-muted)] mt-2`}>
+                  Standard pricing is $300
+                </p>
+              </div>
+
             )}
           </div>
 
@@ -672,24 +687,94 @@ export default function PowerRetreatSignUp() {
 
               <div className="space-y-4">
                 <div>
-                  <label className={labelClasses}>Are you Catholic?</label>
+                  <label className={labelClasses}>Are you a member of the Clergy?</label>
                   <div className="space-y-2">
-                    {["yes", "no", "exploring"].map((option) => (
+                    {["no", "yes"].map((option) => (
                       <label key={option} className="flex items-center gap-3 cursor-pointer">
                         <input
                           type="radio"
-                          name="is_catholic"
+                          name="is_clergy"
                           value={option}
-                          checked={formData.is_catholic === option}
-                          onChange={handleInputChange}
+                          checked={formData.is_clergy === option}
+                          onChange={(e) => {
+                            handleInputChange(e);
+                            // Reset vocation_status and is_catholic based on clergy answer
+                            if (e.target.value === "no") {
+                              setFormData((prev) => ({ ...prev, vocation_status: "layperson" }));
+                            } else {
+                              setFormData((prev) => ({ ...prev, vocation_status: "", is_catholic: "yes" }));
+                            }
+                          }}
                           className="w-4 h-4 accent-[var(--accent-primary)]"
                         />
                         <span className={`${inter.className} text-[var(--foreground)] capitalize`}>
-                          {option === "exploring" ? "Exploring faith" : option === "yes" ? "Yes" : "No"}
+                          {option === "yes" ? "Yes" : "No"}
                         </span>
                       </label>
                     ))}
                   </div>
+                </div>
+
+                {formData.is_clergy === "yes" && (
+                  <div>
+                    <label className={labelClasses}>Vocation</label>
+                    <div className="space-y-2">
+                      {[
+                        { value: "seminarian", label: "Seminarian" },
+                        { value: "deacon", label: "Deacon" },
+                        { value: "priest", label: "Priest" },
+                        { value: "religious_brother", label: "Religious Brother" },
+                        { value: "bishop", label: "Bishop" },
+                      ].map((option) => (
+                        <label key={option.value} className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="vocation_status"
+                            value={option.value}
+                            checked={formData.vocation_status === option.value}
+                            onChange={handleInputChange}
+                            className="w-4 h-4 accent-[var(--accent-primary)]"
+                          />
+                          <span className={`${inter.className} text-[var(--foreground)]`}>
+                            {option.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className={labelClasses}>Are you Catholic?</label>
+                  <div className="space-y-2">
+                    {["yes", "no", "exploring"].map((option) => {
+                      const isDisabled = formData.is_clergy === "yes" && option !== "yes";
+                      return (
+                        <label 
+                          key={option} 
+                          className={`flex items-center gap-3 ${isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                        >
+                          <input
+                            type="radio"
+                            name="is_catholic"
+                            value={option}
+                            checked={formData.is_catholic === option}
+                            onChange={handleInputChange}
+                            disabled={isDisabled}
+                            className="w-4 h-4 accent-[var(--accent-primary)]"
+                          />
+                          <span className={`${inter.className} text-[var(--foreground)] capitalize`}>
+                            {option === "exploring" ? "Exploring faith" : option === "yes" ? "Yes" : "No"}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                  {formData.is_clergy === "yes" && (
+                    <p className={`${inter.className} text-[var(--foreground-muted)] text-sm mt-2`}>
+                      Automatically set to Yes for clergy members
+                    </p>
+                  )}
                 </div>
 
                 <div>
