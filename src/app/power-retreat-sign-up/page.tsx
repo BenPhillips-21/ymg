@@ -949,6 +949,18 @@ export default function PowerRetreatSignUp() {
               </div>
             )}
 
+            {/* Important Notice */}
+            <div className="card p-4 mb-6 border-[var(--accent-primary)] border bg-[var(--accent-primary)]/10">
+              <p className={`${inter.className} text-[var(--foreground)] text-sm`}>
+                <span className="font-semibold">⚠️ Important:</span> Once you click the button below, please complete the payment process. 
+                If you leave the payment page before completing, you will need to contact us at{" "}
+                <a href="mailto:ymgmovementaustralia@gmail.com" className="text-[var(--accent-primary)] underline">
+                  ymgmovementaustralia@gmail.com
+                </a>{" "}
+                to register again.
+              </p>
+            </div>
+
             <button
               type="submit"
               disabled={isSubmitting}
